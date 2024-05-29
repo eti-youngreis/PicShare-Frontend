@@ -21,7 +21,6 @@ type Props = {
 export default function Init({ children }: Props) {
     const dispatch = useDispatch()
     useEffect(() => {
-<<<<<<< HEAD
         const fetchData = async () => {
             try {
                 const images: ImageType[] = await getAllImages()
@@ -42,44 +41,11 @@ export default function Init({ children }: Props) {
                     dispatch(setInitialized())
                 }
                 dispatch(setImages(images))
-=======
-        const fetchAuthData = async () => {
-            const token: string | null = getSession()
-            if (token && isValidToken(token)) {
-                try {
-                    const user: UserType = await getUser(token)
-                    dispatch(setUser({ id: user.id, fullName: user.fullName! }))
-                    setSession(token)
-                } catch (error) {
-                    // Handle error
-                    console.error("Error fetching user:", error)
-                }
-                finally {
-                    dispatch(setInitialized())
-                }
-            } else {
-                dispatch(setInitialized())
-            }
-        }
-        const fetchData = async () => {
-            try {
-                const images: ImageType[] = await getAllImages()
-                debugger
-                // const designedImages: DesignedImage[] = await getAllDesignedImages()
-                // const designTemplates: DesignTemplate[] = await getAllTemplates()
-                dispatch(setImages(images))
-                // dispatch(setDesignedImages(designedImages))
-                // dispatch(setDesignTemplates(designTemplates))
->>>>>>> 51a29fb1c023f134593ddabb8f6b8f9776eb0b94
             }
             catch (error) {
                 console.error("Error fetching data: ", error)
             }
         }
-<<<<<<< HEAD
-=======
-        fetchAuthData()
->>>>>>> 51a29fb1c023f134593ddabb8f6b8f9776eb0b94
         fetchData()
     }, [])
     return <>{children}</>

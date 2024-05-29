@@ -21,28 +21,6 @@ type Props = {
 export default function Init({ children }: Props) {
     const dispatch = useDispatch()
     useEffect(() => {
-<<<<<<< HEAD
-        const fetchData = async () => {
-            try {
-                const images: ImageType[] = await getAllImages()
-                dispatch(setImages(images))
-                const token: string | null = getSession()
-                if (token && isValidToken(token)) {
-                    try {
-                        const user: UserType = await getUser(token)
-                        dispatch(setUser({ id: user.id, fullName: user.fullName! }))
-                        setSession(token)
-                    } catch (error) {
-                        console.error("Error fetching user:", error)
-                    }
-                    finally {
-                        dispatch(setInitialized())
-                    }
-                } else {
-                    dispatch(setInitialized())
-                }
-                dispatch(setImages(images))
-=======
         const fetchAuthData = async () => {
             const token: string | null = getSession()
             if (token && isValidToken(token)) {
@@ -70,16 +48,12 @@ export default function Init({ children }: Props) {
                 dispatch(setImages(images))
                 // dispatch(setDesignedImages(designedImages))
                 // dispatch(setDesignTemplates(designTemplates))
->>>>>>> 51a29fb1c023f134593ddabb8f6b8f9776eb0b94
             }
             catch (error) {
                 console.error("Error fetching data: ", error)
             }
         }
-<<<<<<< HEAD
-=======
         fetchAuthData()
->>>>>>> 51a29fb1c023f134593ddabb8f6b8f9776eb0b94
         fetchData()
     }, [])
     return <>{children}</>
