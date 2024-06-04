@@ -7,6 +7,7 @@ type UserImagesProps = {
     userId:number
 }
 export default function UserImages({userId}:UserImagesProps) {
+    debugger
     const userImages = useAppSelector(selectImages).filter(image=>image.userId===userId)
     return <ImagesGallery images={userImages}/>
 };
