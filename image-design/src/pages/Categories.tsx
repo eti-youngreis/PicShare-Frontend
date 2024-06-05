@@ -1,12 +1,8 @@
 import React from 'react';
-import ImageCategory from '../utils/category.enum';
-import { useAppSelector } from '../redux/store';
-import { selectImages } from '../redux/image/image.selectors';
-import ImagesGallery from './ImagesGallery';
+import {HebrewImageCategory, ImageCategory} from '../utils/category.enum'
 import { PATHS } from '../routes/paths';
 
 const Categories: React.FC = () => {
-    
     const imageSrc = {
         Buildings: require('../assets/images/building.jpg'),
         Animals: require('../assets/images/animal.jpg'),
@@ -15,22 +11,20 @@ const Categories: React.FC = () => {
         Other: require('../assets/images/other.jpg')
     }
 
-const allCategories = Object.keys(ImageCategory)
-
-    const handleClick = (category: string) => {
-        window.location.href = `${PATHS.CategoryImages}/${category}`
-    };
+    const handleCategoryClick = (category:string) => {
+       window.location.href=`${PATHS.Home}/${PATHS.CategoryImages}/${category}`
+    }
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '10%' }}>
-            {allCategories.map(category => (
-                <div key={category} style={{ margin: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center' }} onClick={() => handleClick(category)}>
-                    {/* <img src={imageSrc[category]} alt={category} style={{ width: '200px', height: '200px', objectFit: 'cover', borderRadius: '10px', cursor: 'pointer' }} /> */}
-                    <div>{category}</div>
+        <div>
+            {Object.keys(ImageCategory).map((category) => (
+                <div key={category} onClick={() => handleCategoryClick(category)}>
+                        <img src={imageSrc[category as keyof typeof imageSrc]} alt={category} style={{ maxWidth: '100%', maxHeight: '200px' }} />
+                        <p>{ImageCategory[category as keyof typeof HebrewImageCategory]}</p>
                 </div>
             ))}
         </div>
     );
-};
+}
 
 export default Categories;

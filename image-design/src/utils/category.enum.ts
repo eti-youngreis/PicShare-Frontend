@@ -1,5 +1,5 @@
 
-enum ImageCategory  {
+export enum  HebrewImageCategory {
     Buildings= 'מבנים',
     Animals= 'חיות',
     Landscapes= 'נופים',
@@ -7,4 +7,11 @@ enum ImageCategory  {
     Other= 'אחר'
 }
 
-export default ImageCategory
+export enum ImageCategory{
+    Buildings= 'buildings',
+    Animals='animals',
+    Landscapes='landscapes',
+    Food='food',
+    Other='other'
+}
+

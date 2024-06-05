@@ -1,6 +1,6 @@
 import { selectImages } from "../redux/image/image.selectors";
 import { useAppSelector } from "../redux/store";
-import ImageCategory from "../utils/category.enum";
+import {ImageCategory} from "../utils/category.enum";
 import ImagesGallery from "./ImagesGallery";
 type CategoryImagesProps = {
     category: ImageCategory
