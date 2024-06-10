@@ -3,6 +3,8 @@ export type UserSignInType = {
     password: string
 };
 export type FullUserType = {
+    profileImage?:File,
+    profileImagePath?:string,
     id?: number,
     fullName: string,
     email: string,
@@ -10,5 +12,11 @@ export type FullUserType = {
 };
 export type UserType = {
     id: number,
-    fullName: string
+    fullName: string,
+    email:string,
+    profileImagePath?:string
+}
+export type UserUpdate = {
+    fullName?:string,
+    profileImage?:File
 }
