@@ -12,7 +12,8 @@ const Categories: React.FC = () => {
     };
 
     const handleCategoryClick = (category: string) => {
-        window.location.href = `${PATHS.Home}/${PATHS.CategoryImages}/${category}`;
+        // window.location.href = `${PATHS.Home}/${PATHS.CategoryImages}/${category}`;
+        window.location.href = `${PATHS.Home}/${category}`;
     };
 
     const imageSize = {
