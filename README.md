@@ -1,2 +1,3 @@
-# PicShare-Backend
-Backend for PicShare - built with ASP.NET Core. Handles user authentication, image management, and API services.
+# PicShare-Frontend
+
+Frontend for PicShare, built with **React** and **TypeScript**, featuring a responsive design using **Material-UI**. Includes user registration, login, and API integration.
