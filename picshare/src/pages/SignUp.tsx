@@ -3,8 +3,6 @@ import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Grid from '@mui/material/Grid';
 import Box from '@mui/material/Box';
@@ -12,7 +10,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { addUser } from '../services/user.service'
-import { FullUserType } from '../types/user.types';
+import { UserSignUpType } from '../types/user.types';
 import { signin } from '../services/auth.service'
 import { setSession } from '../auth/utils';
 import { setUser } from '../redux/auth/auth.slice';
@@ -57,20 +55,20 @@ export default function SignUp() {
     const data = new FormData(event.currentTarget);
     if (validate(data)) {
       event.currentTarget.reset();
-      const newUser: FullUserType = {
+      const newUser: UserSignUpType = {
         fullName: data.get('fullName')!.toString(),
         email: data.get('email')!.toString(),
         password: data.get('password')!.toString()
       }
-      const res = await addUser(newUser)
-      if (res) {
-        const token = await signin(data.get('email')!.toString(), data.get('password')!.toString())
-        setSession(token)
-        setUser({ id: res, fullName: data.get('fullName')!.toString() })
-      }
-      else {
-          setErrors({...errors, email:'Email already exists, please sign in'})
-      }
+      // const res = await addUser(newUser)
+      // if (res) {
+      //   const token = await signin(data.get('email')!.toString(), data.get('password')!.toString())
+      //   setSession(token)
+      //   setUser({ id: res, fullName: data.get('fullName')!.toString() })
+      // }
+      // else {
+      //     setErrors({...errors, email:'Email already exists, please sign in'})
+      // }
     }    
   };
 

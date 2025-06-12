@@ -10,8 +10,6 @@ import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox'
 import MailIcon from '@mui/icons-material/Mail'
 
-type Anchor = 'right';
-
 export default function SwipeableTemporaryDrawer() {
   const [state, setState] = React.useState({
     right: true,
@@ -19,18 +17,18 @@ export default function SwipeableTemporaryDrawer() {
 
   const toggleDrawer =
     (open: boolean) =>
-    (event: React.KeyboardEvent | React.MouseEvent) => {
-      if (
-        event &&
-        event.type === 'keydown' &&
-        ((event as React.KeyboardEvent).key === 'Tab' ||
-          (event as React.KeyboardEvent).key === 'Shift')
-      ) {
-        return;
-      }
+      (event: React.KeyboardEvent | React.MouseEvent) => {
+        if (
+          event &&
+          event.type === 'keydown' &&
+          ((event as React.KeyboardEvent).key === 'Tab' ||
+            (event as React.KeyboardEvent).key === 'Shift')
+        ) {
+          return;
+        }
 
-      setState({ ...state, right: open });
-    };
+        setState({ ...state, right: open });
+      };
 
   const list = () => (
     <Box

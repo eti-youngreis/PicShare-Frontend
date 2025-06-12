@@ -1,4 +1,3 @@
-import { PATHS } from "../routes/paths";
 import axios from "../utils/axios";
 
 export const setSession = (token: string) => {

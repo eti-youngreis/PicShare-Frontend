@@ -20,7 +20,7 @@ export default function InitializedAuth({ children }: Props) {
             if (token && isValidToken(token)) {
                 try {
                     const user: UserType = await getUser(token)
-                    dispatch(setUser({ id: user.id, fullName: user.fullName! }))
+                    dispatch(setUser({ id: user.id, fullName: user.fullName!, email: user.email! }))
                     setSession(token)
                 } catch (error) {
                     // Handle error

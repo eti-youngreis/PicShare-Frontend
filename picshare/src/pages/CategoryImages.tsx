@@ -1,11 +1,11 @@
-import { selectImages } from "../redux/image/image.selectors";
+import { selectPhotos } from "../redux/photo/photo.selectors";
 import { useAppSelector } from "../redux/store";
-import {ImageCategory} from "../utils/category.enum";
-import ImagesGallery from "./ImagesGallery";
+import {PhotoCategory} from "../utils/category.enum";
+import PhotosGallery from "./PhotosGallery";
 type CategoryImagesProps = {
-    category: ImageCategory
+    category: PhotoCategory
 }
 export default function CategoryImages({category}:CategoryImagesProps){
-    const images = useAppSelector(selectImages).filter(image=>image.category===category)
-    return <ImagesGallery images={images}/>
+    // const images = useAppSelector(selectPhotos).filter(image=>image.category===category)
+    return <PhotosGallery/>
 }

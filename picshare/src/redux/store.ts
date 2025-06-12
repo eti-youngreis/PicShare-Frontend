@@ -1,16 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
 import authReducer from './auth/auth.slice'
-import imagesReducer from './image/image.slice'
-import designTemplatesReducer from './designTemplate/designTemplate.slice'
-import designedImagesReducer from './designedImage/designedImage.slice'
+import photoReducer from './photo/photo.slice'
 import { useSelector, TypedUseSelectorHook } from 'react-redux'
 
 export const store = configureStore({
     reducer: {
         auth: authReducer,
-        images: imagesReducer,
-        designedImages: designedImagesReducer,
-        designTemplates: designTemplatesReducer
+        photos: photoReducer
     }
 })
 

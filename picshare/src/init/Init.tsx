@@ -2,10 +2,10 @@ import { ReactNode, useEffect } from "react"
 import { useDispatch } from "react-redux"
 import { getSession, isValidToken, setSession } from "../auth/utils"
 import { setUser, setInitialized } from "../redux/auth/auth.slice"
-import { setImages } from "../redux/image/image.slice"
-import { getAllImages } from "../services/image.service"
+import { setPhotos } from "../redux/photo/photo.slice"
+import { getAllImages } from "../services/photo.service"
 import { getUser } from "../services/user.service"
-import ImageType from "../types/image.type"
+import { PhotoType } from "../types/photo.type"
 import { UserType } from "../types/user.types"
 
 type Props = {
@@ -34,8 +34,8 @@ export default function Init({ children }: Props) {
         }
         const fetchData = async () => {
             try {
-                const images: ImageType[] = await getAllImages()
-                dispatch(setImages(images))
+                const images: PhotoType[] = await getAllImages()
+                dispatch(setPhotos(images))
             }
             catch (error) {
                 console.error("Error fetching data: ", error)

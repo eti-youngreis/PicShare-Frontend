@@ -5,8 +5,7 @@ import SignIn from '../pages/SignIn'
 import SignUp from '../pages/SignUp'
 import { PATHS } from './paths'
 import GuestGuard from '../auth/GuestGuard'
-import ImagesGallery from '../pages/ImagesGallery'
-import React from 'react'
+import PhotosGallery from '../pages/PhotosGallery'
 
 export const router = createBrowserRouter([
     {
@@ -23,7 +22,11 @@ export const router = createBrowserRouter([
             },
             {
                 path: PATHS.Gallery,
-                element: <ImagesGallery />
+                element: <PhotosGallery />
+            },
+            {
+                path: PATHS.AllPhotographers,
+                element: <PhotosGallery />
             }
         ]
     },

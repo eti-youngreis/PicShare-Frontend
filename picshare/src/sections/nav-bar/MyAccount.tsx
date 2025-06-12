@@ -1,25 +1,23 @@
-import React, { useState, useEffect, ChangeEvent } from 'react';
+import { useState, ChangeEvent } from 'react';
 import { Typography, Box, Avatar, Button, Grid, IconButton, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import { useAppSelector } from '../../redux/store';
 import { selectAuth } from '../../redux/auth/auth.selectors';
 import DeleteIcon from '@mui/icons-material/Delete';
-import ImageType from '../../types/image.type';
-import { useDispatch } from 'react-redux';
-import { deleteImage } from '../../services/image.service';
+import { PhotoType } from '../../types/photo.type';
+import { deletePhoto } from '../../services/photo.service';
+import { updateProfile } from '../../services/user.service';
 
 export default function MyAccount() {
     const { user } = useAppSelector(selectAuth);
-    const [images, setImages] = useState<ImageType[]>([]);
+    const [photos, setPhotos] = useState<PhotoType[]>([]);
     const [openEditDialog, setOpenEditDialog] = useState(false);
-    const [profileImage, setProfileImage] = useState<File | null>(null);
+    const [profilePicture, setProfilePicture] = useState<File | null>(null);
     const [name, setName] = useState(user?.fullName || '');
 
-    const dispatch = useDispatch();
-
-    const handleDeleteImage = async (imageId: number) => {
-        const response = await deleteImage(imageId);
+    const handleDeletePhoto = async (photoId: number) => {
+        const response = await deletePhoto(photoId);
         if (response.status === 200) {
-            setImages(images.filter(image => image.id !== imageId));
+            setPhotos(photos.filter(photo => photo.id !== photoId));
         } else {
             console.error('Error deleting image');
         }
@@ -28,8 +26,8 @@ export default function MyAccount() {
     const handleEditProfile = async () => {
         const formData = new FormData();
         formData.append('fullName', name);
-        if (profileImage) {
-            formData.append('image', profileImage);
+        if (profilePicture) {
+            formData.append('image', profilePicture);
         }
 
         try {
@@ -48,7 +46,7 @@ export default function MyAccount() {
 
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files.length > 0) {
-            setProfileImage(event.target.files[0]);
+            setProfilePicture(event.target.files[0]);
         }
     };
 
@@ -60,26 +58,26 @@ export default function MyAccount() {
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 4 }}>
                 <Avatar
                     alt="Profile Picture"
-                    src={user?.profileImagePath || ''}
+                    src={user?.profilePictureUrl || ''}
                     sx={{ width: 80, height: 80, mr: 2 }}
                 />
-                <Typography variant="h6">{user?.name}</Typography>
+                <Typography variant="h6">{user?.fullName}</Typography>
                 <Button variant="outlined" sx={{ ml: 2 }} onClick={() => setOpenEditDialog(true)}>
                     Edit Profile
                 </Button>
             </Box>
             <Typography variant="h5" gutterBottom>
-                My Images
+                My Photos
             </Typography>
             <Grid container spacing={2}>
-                {images.map(image => (
-                    <Grid item xs={12} sm={6} md={4} key={image.id}>
+                {photos.map(photo => (
+                    <Grid item xs={12} sm={6} md={4} key={photo.id}>
                         <Box sx={{ position: 'relative' }}>
-                            <img src={image.url} alt={image.title} style={{ width: '100%', borderRadius: '8px' }} />
+                            <img src={photo.url} style={{ width: '100%', borderRadius: '8px' }} />
                             <IconButton
                                 aria-label="delete"
                                 sx={{ position: 'absolute', top: 8, right: 8, color: 'white', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
-                                onClick={() => handleDeleteImage(image.id)}
+                                onClick={() => handleDeletePhoto(photo.id)}
                             >
                                 <DeleteIcon />
                             </IconButton>
@@ -98,7 +96,7 @@ export default function MyAccount() {
                         onChange={(e) => setName(e.target.value)}
                     />
                     <Button variant="contained" component="label" fullWidth>
-                        Upload Profile Image
+                        Upload Profile Picture
                         <input type="file" hidden onChange={handleFileChange} />
                     </Button>
                 </DialogContent>

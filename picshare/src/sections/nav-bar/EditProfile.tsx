@@ -5,23 +5,23 @@ import { selectAuth } from '../../redux/auth/auth.selectors';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useDispatch } from 'react-redux';
-import { deleteImage } from '../../services/image.service';
+import { deletePhoto } from '../../services/photo.service';
 import { updateProfile } from '../../services/user.service';
-import { selectImages } from '../../redux/image/image.selectors';
-import { setImages } from '../../redux/image/image.slice';
+import { selectPhotos } from '../../redux/photo/photo.selectors';
+import { setPhotos } from '../../redux/photo/photo.slice';
 
 export default function EditProfile() {
     const { user } = useAppSelector(selectAuth);
-    const images = useAppSelector(selectImages).filter(image => image.userId === user?.id);
-    const [profileImage, setProfileImage] = useState<File | null>(null);
+    const photos = useAppSelector(selectPhotos).filter(photo => photo.userId === user?.id);
+    const [profilePicture, setProfilePicture] = useState<File | null>(null);
     const [name, setName] = useState<string>(user?.fullName || '');
     const dispatch = useDispatch();
 
     const handleEditProfile = async () => {
         const formData = new FormData();
         formData.append('fullName', name);
-        if (profileImage) {
-            formData.append('profileImage', profileImage);
+        if (profilePicture) {
+            formData.append('profilePicture', profilePicture);
         }
 
         try {
@@ -38,13 +38,13 @@ export default function EditProfile() {
 
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files.length > 0) {
-            setProfileImage(event.target.files[0]);
+            setProfilePicture(event.target.files[0]);
         }
     };
 
-    async function handleDeleteImage(id: number) {
-        await deleteImage(id);
-        dispatch(setImages(images.filter(image => image.id !== id)));
+    async function handleDeletePhoto(id: number) {
+        await deletePhoto(id);
+        dispatch(setPhotos(photos.filter(photo => photo.id !== id)));
     }
 
     return (
@@ -56,12 +56,12 @@ export default function EditProfile() {
                 <Box sx={{ position: 'relative' }}>
                     <Avatar
                         alt="Profile Picture"
-                        src={user?.profileImagePath || ''}
+                        src={user?.profilePictureUrl || ''}
                         sx={{ width: 120, height: 120, mr: 2, cursor: 'pointer' }}
                     />
-                    <label htmlFor="profile-image-upload">
+                    <label htmlFor="profile-picture-upload">
                         <input
-                            id="profile-image-upload"
+                            id="profile-picture-upload"
                             type="file"
                             accept="image/*"
                             style={{ display: 'none' }}
@@ -95,14 +95,14 @@ export default function EditProfile() {
                 התמונות שלי
             </Typography>
             <Grid container spacing={2}>
-                {images.map(image => (
-                    <Grid item xs={3} sm={2} md={2} key={image.id!}>
+                {photos.map(photo => (
+                    <Grid item xs={3} sm={2} md={2} key={photo.id!}>
                         <Box sx={{ position: 'relative' }}>
-                            <img src={image.imagePath} alt={"תמונה"} style={{ width: '100%', borderRadius: '8px' }} />
+                            <img src={photo.url} alt={"תמונה"} style={{ width: '100%', borderRadius: '8px' }} />
                             <IconButton
                                 aria-label="delete"
                                 sx={{ position: 'absolute', top: 8, right: 8, color: 'white', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
-                                onClick={() => handleDeleteImage(image.id!)}
+                                onClick={() => handleDeletePhoto(photo.id!)}
                             >
                                 <DeleteIcon sx={{height:20, width:20}}/>
                             </IconButton>

@@ -11,11 +11,11 @@ import {
   MenuItem as SelectMenuItem,
   SelectChangeEvent,
 } from '@mui/material';
-import { ImageCategory } from '../../utils/category.enum';
+import { PhotoCategory } from '../../utils/category.enum';
 
 const UploadDialog: React.FC = () => {
   const [openDialog, setOpenDialog] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<ImageCategory | ''>('');
+  const [selectedCategory, setSelectedCategory] = useState<PhotoCategory | ''>('');
 
   const handleUploadDialogOpen = () => {
     setOpenDialog(true);
@@ -25,7 +25,7 @@ const UploadDialog: React.FC = () => {
     setOpenDialog(false);
   };
 
-  const handleUploadImage = () => {
+  const handleUploadPhoto = () => {
     console.log('תמונה הועלתה בהצלחה עם הקטגוריה:', selectedCategory);
     handleUploadDialogClose();
   };
@@ -40,13 +40,13 @@ const UploadDialog: React.FC = () => {
             labelId="category-select-label"
             id="category-select"
             value={selectedCategory}
-            onChange={(event: SelectChangeEvent<ImageCategory>) => {
-              setSelectedCategory(event.target.value as ImageCategory);
+            onChange={(event: SelectChangeEvent<PhotoCategory>) => {
+              setSelectedCategory(event.target.value as PhotoCategory);
             }}
             label="בחר קטגוריה"
             fullWidth
           >
-            {Object.values(ImageCategory).map((category) => (
+            {Object.values(PhotoCategory).map((category) => (
               <SelectMenuItem key={category} value={category}>{category}</SelectMenuItem>
             ))}
           </Select>
@@ -56,7 +56,7 @@ const UploadDialog: React.FC = () => {
         <Button onClick={handleUploadDialogClose} color="primary">
           ביטול
         </Button>
-        <Button onClick={handleUploadImage} color="primary" disabled={!selectedCategory}>
+        <Button onClick={handleUploadPhoto} color="primary" disabled={!selectedCategory}>
           העלאה
         </Button>
       </DialogActions>
