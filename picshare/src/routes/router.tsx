@@ -23,15 +23,12 @@ export const router = createBrowserRouter([
             {
                 path: PATHS.Gallery,
                 element: <PhotosGallery />
-            },
-            {
-                path: PATHS.AllPhotographers,
-                element: <PhotosGallery />
             }
         ]
     },
     { path: PATHS.SignIn, element: <GuestGuard><SignIn /></GuestGuard> },
     { path: PATHS.SignUp, element: <GuestGuard><SignUp /></GuestGuard> },
+    { path: PATHS.AllPhotographers, element: <PhotosGallery /> },
     {
         path: '', element: <Navigate to={PATHS.Home} />
     }
