@@ -23,7 +23,7 @@ export default function Account() {
         <>
             {!isAuthenticated && (
                 <Typography variant="h6" component="div">
-                    <Link to={`/${PATHS.SignIn}`} style={{ textDecoration: 'none', color: 'inherit' }}>כניסה</Link>
+                    <Link to={`${PATHS.SignIn}`} style={{ textDecoration: 'none', color: 'inherit' }}>כניסה</Link>
                 </Typography>
             )}
             {isAuthenticated && (

@@ -9,68 +9,92 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { addUser } from '../services/user.service'
+import { Navigate } from 'react-router-dom';
 import { UserSignUpType } from '../types/user.types';
-import { signin } from '../services/auth.service'
-import { setSession } from '../auth/utils';
-import { setUser } from '../redux/auth/auth.slice';
+import { PATHS } from '../routes/paths';
+import { signup } from '../services/auth.service';
 
 export default function SignUp() {
+  const [formData, setFormData] = React.useState({
+    fullName: '',
+    email: '',
+    password: ''
+  });
+
   const [errors, setErrors] = React.useState({
     fullName: '',
     email: '',
     password: '',
-  })
+  });
 
-  const validate = (data: FormData) => {
-    console.log('validate')
+  const [redirect, setRedirect] = React.useState(false);
+
+  const validate = () => {
     let isValidData = true;
-    const temp = { ...errors }
+    const temp = { ...errors };
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const isValid = emailPattern.test((data.get('email') || "").toString());
-    if (!data.get('email') || data.get('email')!.toString() === '' || !isValid) {
-      isValidData = false
-      temp.email = "Email is not valid"
+
+    if (!formData.email || !emailPattern.test(formData.email)) {
+      isValidData = false;
+      temp.email = "Email is not valid";
+    } else {
+      temp.email = '';
     }
-    else
-      temp.email = ''
-    if (!data.get('password') || data.get('password')!.toString() === '' || data.get('password')!.toString().length < 6) {
-      isValidData = false
-      temp.password = 'Password is not valid, enter at least 6 characters'
+
+    if (!formData.password || formData.password.length < 6) {
+      isValidData = false;
+      temp.password = 'Password is not valid, enter at least 6 characters';
+    } else {
+      temp.password = '';
     }
-    else
-      temp.password = ''
-    if (!data.get('fullName') || data.get('fullName')!.toString() === '') {
-      isValidData = false
-      temp.fullName = 'Name is required'
+
+    if (!formData.fullName) {
+      isValidData = false;
+      temp.fullName = 'Name is required';
+    } else {
+      temp.fullName = '';
     }
-    else
-      temp.fullName = ''
-    setErrors(temp)
-    return isValidData
-  }
+
+    setErrors(temp);
+    return isValidData;
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    if (validate(data)) {
-      event.currentTarget.reset();
-      const newUser: UserSignUpType = {
-        fullName: data.get('fullName')!.toString(),
-        email: data.get('email')!.toString(),
-        password: data.get('password')!.toString()
+    
+    if (validate()) {
+      try {
+        const userData: UserSignUpType = {
+          fullName: formData.fullName,
+          email: formData.email,
+          password: formData.password,
+        };
+        
+        await signup(userData);
+        setRedirect(true);
+      } catch (error: any) {
+        if (error.response?.status === 500) {
+          console.error('Server error:', error.response.message);
+        }
+        setErrors(prev => ({ 
+          ...prev, 
+          email: error.response?.data || 'An error occurred during sign up' 
+        }));
       }
-      // const res = await addUser(newUser)
-      // if (res) {
-      //   const token = await signin(data.get('email')!.toString(), data.get('password')!.toString())
-      //   setSession(token)
-      //   setUser({ id: res, fullName: data.get('fullName')!.toString() })
-      // }
-      // else {
-      //     setErrors({...errors, email:'Email already exists, please sign in'})
-      // }
-    }    
+    }
   };
+
+  if (redirect) {
+    return <Navigate to={PATHS.SignIn} />;
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -89,7 +113,6 @@ export default function SignUp() {
         <Typography component="h1" variant="h5">
           Sign up
         </Typography>
-        {/* {!!errors.afterSubmit && <Alert severity="error">{errors.afterSubmit}</Alert>} */}
         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
@@ -99,6 +122,8 @@ export default function SignUp() {
                 fullWidth
                 id="fullName"
                 label="Full Name"
+                value={formData.fullName}
+                onChange={handleChange}
                 error={!!errors.fullName}
                 helperText={errors.fullName}
                 autoFocus
@@ -110,9 +135,11 @@ export default function SignUp() {
                 id="email"
                 label="Email Address"
                 name="email"
-                autoComplete="email"
+                value={formData.email}
+                onChange={handleChange}
                 error={!!errors.email}
                 helperText={errors.email}
+                autoComplete="email"
               />
             </Grid>
             <Grid item xs={12}>
@@ -122,17 +149,13 @@ export default function SignUp() {
                 label="Password"
                 type="password"
                 id="password"
+                value={formData.password}
+                onChange={handleChange}
                 error={!!errors.password}
                 helperText={errors.password}
                 autoComplete="new-password"
               />
             </Grid>
-            {/* <Grid item xs={12}>
-                <FormControlLabel
-                  control={<Checkbox value="allowExtraEmails" color="primary" />}
-                  label="I want to receive inspiration, marketing promotions and updates via email."
-                />
-              </Grid> */}
           </Grid>
           <Button
             type="submit"
@@ -144,14 +167,13 @@ export default function SignUp() {
           </Button>
           <Grid container justifyContent="flex-end">
             <Grid item>
-              <Link href="signIn" variant="body2">
+              <Link href={PATHS.SignIn} variant="body2">
                 Already have an account? Sign in
               </Link>
             </Grid>
           </Grid>
         </Box>
       </Box>
-      {/* <Copyright sx={{ mt: 5 }} /> */}
     </Container>
   );
 }

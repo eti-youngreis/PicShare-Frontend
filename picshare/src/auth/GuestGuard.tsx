@@ -11,7 +11,7 @@ type Props = {
 export default function GuestGuard({ children }: Props) {
     const { isAuthenticated, isInitialized } = useAppSelector(selectAuth);
     if (isAuthenticated) {
-        return <Navigate to={''} />
+        return <Navigate to={'/'} />
     }
     if (!isInitialized) {
         return <h1>Loading...</h1>

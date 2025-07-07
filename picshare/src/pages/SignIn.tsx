@@ -1,4 +1,3 @@
-
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -10,47 +9,92 @@ import Box from '@mui/material/Box';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined'
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { getUser } from '../services/user.service';
+import { getCurrentUser } from '../services/user.service';
 import { setSession } from '../auth/utils';
 import { setUser } from '../redux/auth/auth.slice';
 import { signin } from '../services/auth.service'
+import { useDispatch } from 'react-redux';
 export default function SignIn() {
+  const dispatch = useDispatch();
   const [errors, setErrors] = React.useState({
-    error: ''
-  })
+    email: '',
+    password: '',
+    general: ''
+  });
+  const [isLoading, setIsLoading] = React.useState(false);
+
   const validate = (data: FormData) => {
-    console.log('validate')
-    let isValidData = true
-    const temp = { ...errors }
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    const isValid = emailPattern.test((data.get('email') || "").toString())
-    if (!data.get('email') || data.get('email')!.toString() === '' || !isValid || !data.get('password') || data.get('password')!.toString() === '') {
-      isValidData = false
-      temp.error = "אימייל / סיסמה לא תקין"
+    const newErrors = {
+      email: '',
+      password: '',
+      general: ''
+    };
+    let isValidData = true;
+
+    const email = data.get('email')?.toString() || '';
+    const password = data.get('password')?.toString() || '';
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // Email validation
+    if (!email) {
+      newErrors.email = 'נדרש להזין אימייל';
+      isValidData = false;
+    } else if (!emailPattern.test(email)) {
+      newErrors.email = 'נא להזין כתובת אימייל תקינה';
+      isValidData = false;
     }
-    setErrors(temp)
+
+    // Password validation
+    if (!password) {
+      newErrors.password = 'נדרש להזין סיסמה';
+      isValidData = false;
+    }
+
+    setErrors(newErrors);
     return isValidData
   }
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
+    // Clear all previous errors
+    setErrors({ email: '', password: '', general: '' });
+
     if (validate(data)) {
-      event.currentTarget.reset();
-      await signin(data.get('email')!.toString(), data.get('password')!.toString()).then(async (result: any) => {
-        setSession(result)
-        setUser(await getUser(result))
-      }).catch((error: any) => {
-        if (error.response && error.response.status === 500) {
-          console.log(error.response.message)
+      setIsLoading(true);
+      try {
+        // 1. Sign in and get token
+        const token = await signin(data.get('email')!.toString(), data.get('password')!.toString());
+        
+        // 2. Save token to session (required for subsequent requests)
+        setSession(token);
+        
+        // 3. Get user details (request will use saved token)
+        const user = await getCurrentUser();
+        
+        // 4. Store user data in Redux
+        dispatch(setUser(user));
+        
+        // 5. Reset form on success
+        event.currentTarget.reset();
+      } catch (error: any) {
+        const serverError = error.response?.data;
+        
+        // Handle specific error cases
+        if (serverError?.code === 'INVALID_CREDENTIALS') {
+          setErrors(prev => ({ ...prev, general: 'אימייל או סיסמה שגויים' }));
+        } else if (serverError?.code === 'USER_NOT_FOUND') {
+          setErrors(prev => ({ ...prev, general: 'לא נמצא משתמש עם אימייל זה' }));
+        } else if (serverError?.code === 'ACCOUNT_LOCKED') {
+          setErrors(prev => ({ ...prev, general: 'החשבון נעול. נא ליצור קשר עם התמיכה' }));
+        } else {
+          setErrors(prev => ({ ...prev, general: 'אירעה שגיאה. נא לנסות שוב מאוחר יותר' }));
         }
-        else {
-        }
-        setErrors({ ...errors, error: error })
-      })
+      } finally {
+        setIsLoading(false);
+      }
     }
-    else {
-    }
-  }
+  };
+
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -66,11 +110,11 @@ export default function SignIn() {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign in
+          התחברות
         </Typography>
-        {errors.error && (
+        {errors.general && (
           <Typography variant="body1" color="error" sx={{ mt: 2, textAlign: 'center' }}>
-            {errors.error}
+            {errors.general}
           </Typography>
         )}
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }} >
@@ -79,9 +123,12 @@ export default function SignIn() {
             required
             fullWidth
             id="email"
-            label="Email Address"
+            label="אימייל"
             name="email"
             autoComplete="email"
+            error={!!errors.email}
+            helperText={errors.email}
+            disabled={isLoading}
             autoFocus
           />
           <TextField
@@ -89,28 +136,32 @@ export default function SignIn() {
             required
             fullWidth
             name="password"
-            label="Password"
+            label="סיסמה"
             type="password"
             id="password"
+            error={!!errors.password}
+            helperText={errors.password}
+            disabled={isLoading}
             autoComplete="current-password"
           />
           <Button
             type="submit"
             fullWidth
             variant="contained"
+            disabled={isLoading}
             sx={{ mt: 3, mb: 2 }}
           >
-            Sign In
+            {isLoading ? 'מתחבר...' : 'התחבר'}
           </Button>
           <Grid container>
             <Grid item xs>
               <Link href="#" variant="body2">
-                Forgot password?
+                שכחת סיסמה?
               </Link>
             </Grid>
             <Grid item>
               <Link href="/signUp" variant="body2">
-                {"Don't have an account? Sign Up"}
+                {"אין לך חשבון? הירשם עכשיו"}
               </Link>
             </Grid>
           </Grid>

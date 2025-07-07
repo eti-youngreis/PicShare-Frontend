@@ -6,7 +6,9 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useDispatch } from 'react-redux';
 import { deletePhoto } from '../../services/photo.service';
-import { updateProfile } from '../../services/user.service';
+import { editProfile } from '../../services/user.service';
+import { UserUpdateType } from '../../types/user.types';
+import { setUser } from '../../redux/auth/auth.slice';
 import { selectPhotos } from '../../redux/photo/photo.selectors';
 import { setPhotos } from '../../redux/photo/photo.slice';
 
@@ -18,19 +20,16 @@ export default function EditProfile() {
     const dispatch = useDispatch();
 
     const handleEditProfile = async () => {
-        const formData = new FormData();
-        formData.append('fullName', name);
-        if (profilePicture) {
-            formData.append('profilePicture', profilePicture);
-        }
-
         try {
-            const response = await updateProfile(user!.id!, formData);
-            if (response.status === 200) {
-                alert('Profile updated successfully');
-            } else {
-                console.error('Error updating profile');
-            }
+            const updateData: UserUpdateType = {
+                fullName: name,
+                profilePicture: profilePicture || undefined
+            };
+
+            const updatedUser = await editProfile(updateData);
+            dispatch(setUser(updatedUser));
+            // TODO: Replace alert with proper notification
+            alert('Profile updated successfully');
         } catch (error) {
             console.error('Error updating profile', error);
         }
@@ -98,7 +97,10 @@ export default function EditProfile() {
                 {photos.map(photo => (
                     <Grid item xs={3} sm={2} md={2} key={photo.id!}>
                         <Box sx={{ position: 'relative' }}>
-                            <img src={photo.url} alt={"תמונה"} style={{ width: '100%', borderRadius: '8px' }} />
+                            <img 
+                                src={photo.url} 
+                                alt={`Uploaded by ${user?.fullName}`}
+                                style={{ width: '100%', borderRadius: '8px' }} />
                             <IconButton
                                 aria-label="delete"
                                 sx={{ position: 'absolute', top: 8, right: 8, color: 'white', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}

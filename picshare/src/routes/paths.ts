@@ -1,7 +1,8 @@
 export const PATHS = {
-    SignIn: 'signIn',
-    AllPhotographers: 'all-photographers',
-    SignUp: 'signUp',
-    Gallery:'gallery',
-    Home: 'home'
+    SignIn: '/signIn',
+    AllPhotographers: 'allPhotographers',
+    SignUp: '/signUp',
+    Gallery: '/gallery',
+    Home: '/home',
+    MyAccount: '/my-account'
 }

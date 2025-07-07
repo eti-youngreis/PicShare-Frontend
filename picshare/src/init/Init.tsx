@@ -3,10 +3,10 @@ import { useDispatch } from "react-redux"
 import { getSession, isValidToken, setSession } from "../auth/utils"
 import { setUser, setInitialized } from "../redux/auth/auth.slice"
 import { setPhotos } from "../redux/photo/photo.slice"
-import { getAllImages } from "../services/photo.service"
-import { getUser } from "../services/user.service"
+import { getCurrentUser } from "../services/user.service"
 import { PhotoType } from "../types/photo.type"
 import { UserType } from "../types/user.types"
+import { getAllPhotos } from "../services/photo.service"
 
 type Props = {
     children: ReactNode
@@ -18,7 +18,7 @@ export default function Init({ children }: Props) {
             const token: string | null = getSession()
             if (token && isValidToken(token)) {
                 try {
-                    const user: UserType = await getUser(token)
+                    const user: UserType = await getCurrentUser()
                     dispatch(setUser(user))
                     setSession(token)
                 } catch (error) {
@@ -34,8 +34,8 @@ export default function Init({ children }: Props) {
         }
         const fetchData = async () => {
             try {
-                const images: PhotoType[] = await getAllImages()
-                dispatch(setPhotos(images))
+                const photos: PhotoType[] = await getAllPhotos()
+                dispatch(setPhotos(photos))
             }
             catch (error) {
                 console.error("Error fetching data: ", error)
@@ -43,6 +43,6 @@ export default function Init({ children }: Props) {
         }
         fetchAuthData()
         fetchData()
-    }, [])
+    }, [dispatch])
     return <>{children}</>
 }

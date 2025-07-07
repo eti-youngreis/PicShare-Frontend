@@ -42,7 +42,7 @@ export default function AccountMenu({ anchorEl, onClose }: MenuProps) {
             },
         }}
     >
-        <MenuItem sx={{ justifyContent: 'flex-end' }}>
+        <MenuItem onClick={() => { window.location.href = `${PATHS.MyAccount}` }} sx={{ justifyContent: 'flex-end' }}>
             <Typography variant="body1" sx={{ fontWeight: 600, color: '#333' }}>
                 לחשבון שלי
             </Typography>
@@ -52,7 +52,7 @@ export default function AccountMenu({ anchorEl, onClose }: MenuProps) {
                 העלה תמונה
             </Typography>
         </MenuItem>
-        <MenuItem onClick={() => { window.location.href = `${PATHS.Home}/${PATHS.Gallery}` }} sx={{ justifyContent: 'flex-end' }}>
+        <MenuItem onClick={() => { window.location.href = `${PATHS.Gallery}` }} sx={{ justifyContent: 'flex-end' }}>
             <Typography variant="body1" sx={{ fontWeight: 600, color: '#333' }}>
                 התמונות שלי
             </Typography>

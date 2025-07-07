@@ -1,46 +1,62 @@
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useEffect } from 'react';
 import { Typography, Box, Avatar, Button, Grid, IconButton, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
-import { useAppSelector } from '../../redux/store';
+import { useAppSelector, useAppDispatch } from '../../redux/store';
 import { selectAuth } from '../../redux/auth/auth.selectors';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { PhotoType } from '../../types/photo.type';
-import { deletePhoto } from '../../services/photo.service';
-import { updateProfile } from '../../services/user.service';
+import { UserUpdateType } from '../../types/user.types';
+import { deletePhoto, getCurrentUserPhotos } from '../../services/photo.service';
+import { editProfile } from '../../services/user.service';
+import { setUser } from '../../redux/auth/auth.slice';
 
 export default function MyAccount() {
+    const dispatch = useAppDispatch();
     const { user } = useAppSelector(selectAuth);
     const [photos, setPhotos] = useState<PhotoType[]>([]);
     const [openEditDialog, setOpenEditDialog] = useState(false);
     const [profilePicture, setProfilePicture] = useState<File | null>(null);
     const [name, setName] = useState(user?.fullName || '');
 
+    useEffect(() => {
+        const loadUserPhotos = async () => {
+            try {
+                const userPhotos = await getCurrentUserPhotos();
+                setPhotos(userPhotos);
+                // TODO: Show error notification if needed
+            } catch (error) {
+                console.error('Error loading photos:', error);
+                setPhotos([]);
+                // TODO: Show error notification
+            }
+        };
+        loadUserPhotos();
+    }, []);
+
     const handleDeletePhoto = async (photoId: number) => {
-        const response = await deletePhoto(photoId);
-        if (response.status === 200) {
-            setPhotos(photos.filter(photo => photo.id !== photoId));
-        } else {
-            console.error('Error deleting image');
+        try {
+            await deletePhoto(photoId);
+            setPhotos(prevPhotos => prevPhotos.filter(photo => photo.id !== photoId));
+            // TODO: Show success notification
+        } catch (error) {
+            console.error('Error deleting image:', error);
+            // TODO: Show error notification
         }
     };
 
     const handleEditProfile = async () => {
-        const formData = new FormData();
-        formData.append('fullName', name);
-        if (profilePicture) {
-            formData.append('image', profilePicture);
-        }
-
         try {
-            const response = await updateProfile(user!.id, formData);
-            if (response.status === 200) {
-                alert('Profile updated successfully');
-                setOpenEditDialog(false);
-                // Ideally, you should update the Redux store here with the new user data.
-            } else {
-                console.error('Error updating profile');
-            }
+            const updateData: UserUpdateType = {
+                fullName: name,
+                profilePicture: profilePicture || undefined
+            };
+
+            const updatedUser = await editProfile(updateData);
+            dispatch(setUser(updatedUser));
+            setOpenEditDialog(false);
+            // TODO: Show success notification
         } catch (error) {
-            console.error('Error updating profile', error);
+            console.error('Error updating profile:', error);
+            // TODO: Show error notification
         }
     };
 
@@ -73,7 +89,11 @@ export default function MyAccount() {
                 {photos.map(photo => (
                     <Grid item xs={12} sm={6} md={4} key={photo.id}>
                         <Box sx={{ position: 'relative' }}>
-                            <img src={photo.url} style={{ width: '100%', borderRadius: '8px' }} />
+                            <img 
+                                src={photo.url} 
+                                alt={`Uploaded by ${user?.fullName}`}
+                                style={{ width: '100%', borderRadius: '8px', maxHeight: '300px', objectFit: 'cover' }} 
+                            />
                             <IconButton
                                 aria-label="delete"
                                 sx={{ position: 'absolute', top: 8, right: 8, color: 'white', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}

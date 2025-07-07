@@ -2,24 +2,21 @@ import { ReactNode, useEffect } from "react"
 import { getSession, isValidToken, setSession } from "./utils"
 import { useDispatch } from "react-redux"
 import { setInitialized, setUser } from "../redux/auth/auth.slice"
-import { getUser } from "../services/user.service"
 import { UserType } from "../types/user.types"
-import { useAppSelector } from "../redux/store"
-import { selectAuth } from "../redux/auth/auth.selectors"
+import { getCurrentUser } from "../services/user.service"
 
 type Props = {
     children: ReactNode
 }
 export default function InitializedAuth({ children }: Props) {
     const dispatch = useDispatch()
-    const { isInitialized } = useAppSelector(selectAuth)
 
     useEffect(() => {
         const fetchData = async () => {
             const token: string | null = getSession()
             if (token && isValidToken(token)) {
                 try {
-                    const user: UserType = await getUser(token)
+                    const user: UserType = await getCurrentUser()
                     dispatch(setUser({ id: user.id, fullName: user.fullName!, email: user.email! }))
                     setSession(token)
                 } catch (error) {

@@ -1,26 +1,27 @@
 import axios from "../utils/axios";
+import { UserUpdateType } from "../types/user.types";
+
 const controller = 'User'
-// export const getUsers = async () => {
-//     const response = await axios.get('/User')
-//     return response.data
-// };
 
-export const addUser = async (user: FormData) => {
-    const response = await axios.post(`${controller}/SignUp`, user)
-    return response.data
-};
-
-export const getUser = async (token: string) => {
-    const response = await axios.get(`${controller}`, { headers: { Authorization: 'Bearer ' + token } })
-    return response.data
+export const getCurrentUser = async () => {
+    const response = await axios.get(`${controller}/profile`);
+    return response.data;
 }
 
 export const getAllUsers = async () => {
-    const response = await axios.get(`${controller}/GetAll`)
-    return response.data
+    const response = await axios.get(`${controller}/all`);
+    return response.data;
 }
 
-export const updateProfile = async (id:number, updatedProfile:FormData) => {
-    const response = await axios.put(`${controller}/${id}`, updatedProfile)
-    return response
+export const editProfile = async (updatedProfile: UserUpdateType) => {
+    const formData = new FormData();
+    if (updatedProfile.fullName) {
+        formData.append('fullName', updatedProfile.fullName);
+    }
+    if (updatedProfile.profilePicture) {
+        formData.append('profilePicture', updatedProfile.profilePicture);
+    }
+
+    const response = await axios.put(`${controller}/profile`, formData);
+    return response.data;
 }

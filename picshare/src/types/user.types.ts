@@ -8,13 +8,14 @@ export type UserSignUpType = {
     password: string
 };
 export type UserType = {
-    id: number,
-    fullName: string,
-    email:string,
-    profilePictureUrl?:string
+    id: number;
+    fullName: string;
+    email: string;
+    profilePictureUrl?: string;
 }
+
 export type UserUpdateType = {
-    fullName?:string,
-    password?:string,
-    profilePicture?:File
+    fullName?: string;
+    password?: string;
+    profilePicture?: File;
 }
